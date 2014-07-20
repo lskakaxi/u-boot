@@ -10,6 +10,7 @@ PATCHLEVEL = 07
 SUBLEVEL =
 EXTRAVERSION =
 NAME =
+BASH = bash
 
 # *DOCUMENTATION*
 # To see a list of typical targets execute "make help"
@@ -786,7 +787,12 @@ u-boot.hex u-boot.srec: u-boot FORCE
 OBJCOPYFLAGS_u-boot.bin := -O binary
 
 binary_size_check: u-boot.bin System.map FORCE
-	@file_size=`stat -c %s u-boot.bin` ; \
+	@platform=`uname`; \
+	if [ "$$platform" = "Darwin" ]; then \
+		file_size=`stat -f %z u-boot.bin` ; \
+	else \
+		file_size=`stat -c %s u-boot.bin` ; \
+	fi ; \
 	map_size=$(shell cat System.map | \
 		awk '/_image_copy_start/ {start = $$1} /_image_binary_end/ {end = $$1} END {if (start != "" && end != "") print "ibase=16; " toupper(end) " - " toupper(start)}' \
 		| bc); \
