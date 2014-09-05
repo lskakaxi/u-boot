@@ -76,7 +76,7 @@ int board_early_init_f(void)
 
 	/* set up the I/O ports */
 	writel(0x007FFFFF, &gpio->gpacon);
-	writel(0x00044555, &gpio->gpbcon);
+	writel(0x00055555, &gpio->gpbcon);
 	writel(0x000007FF, &gpio->gpbup);
 	writel(0xAAAAAAAA, &gpio->gpccon);
 	writel(0x0000FFFF, &gpio->gpcup);
@@ -86,18 +86,21 @@ int board_early_init_f(void)
 	writel(0x0000FFFF, &gpio->gpeup);
 	writel(0x000055AA, &gpio->gpfcon);
 	writel(0x000000FF, &gpio->gpfup);
-	writel(0xFF95FFBA, &gpio->gpgcon);
-	writel(0x0000FFFF, &gpio->gpgup);
+	writel(0xFF94FFBA, &gpio->gpgcon);
+	writel(0x0000FFEF, &gpio->gpgup);
 	writel(0x002AFAAA, &gpio->gphcon);
 	writel(0x000007FF, &gpio->gphup);
+	writel(readl(&gpio->gpgdat) | (1<<4), &gpio->gpgdat);
+	writel(0x02AAAAAA, &gpio->gpjcon);
+	writel(0x00001FFF, &gpio->gpjup);
 
 	return 0;
 }
 
 int board_init(void)
 {
-	/* arch number of SMDK2410-Board */
-	gd->bd->bi_arch_number = MACH_TYPE_SMDK2410;
+	/* arch number of SMDK2440-Board */
+	gd->bd->bi_arch_number = MACH_TYPE_S3C2440;
 
 	/* adress of boot parameters */
 	gd->bd->bi_boot_params = 0x30000100;

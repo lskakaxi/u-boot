@@ -19,10 +19,10 @@
  */
 #define CONFIG_ARM920T		/* This is an ARM920T Core */
 #define CONFIG_S3C24X0		/* in a SAMSUNG S3C24x0-type SoC */
-#define CONFIG_S3C2410		/* specifically a SAMSUNG S3C2410 SoC */
+#define CONFIG_S3C2440		/* specifically a SAMSUNG S3C2410 SoC */
 #define CONFIG_SMDK2410		/* on a SAMSUNG SMDK2410 Board */
 
-#define CONFIG_SYS_TEXT_BASE	0x0
+#define CONFIG_SYS_TEXT_BASE	0x33D80000
 
 #define CONFIG_SYS_ARM_CACHE_WRITETHROUGH
 
@@ -30,15 +30,44 @@
 #define CONFIG_SYS_CLK_FREQ	12000000
 
 #define CONFIG_CMDLINE_TAG	/* enable passing of ATAGs */
+#define CONFIG_133MHZ_SDRAM		0
+
+#define CONFIG_JFFS2_NAND
+
+#define MTDIDS_DEFAULT			"nand0=nandflash0"
+
+#if(CONFIG_64MB_Nand == 1)
+#define MTDPARTS_DEFAULT		"mtdparts=nandflash0:256k@0(bios)," \
+					"48k(params)," \
+					"144k(eboot)," \
+					"1536k(logo)," \
+					"2m(kernel)," \
+					"-(root)"
+
+#else
+#define MTDPARTS_DEFAULT		"mtdparts=nandflash0:256k@0(bios)," \
+					"128k(params)," \
+					"128k(toc)," \
+					"512k(eboot)," \
+					"1024k(logo)," \
+					"2m(kernel)," \
+					"-(root)"
+#endif
+
+/*
+ * Size of malloc() pool
+ */
 #define CONFIG_SETUP_MEMORY_TAGS
 #define CONFIG_INITRD_TAG
 
 /*
  * Hardware drivers
  */
-#define CONFIG_CS8900		/* we have a CS8900 on-board */
-#define CONFIG_CS8900_BASE	0x19000300
-#define CONFIG_CS8900_BUS16	/* the Linux driver does accesses as shorts */
+#define CONFIG_DRIVER_DM9000		1
+#define CONFIG_DM9000_BASE		0x20000300
+#define DM9000_IO			CONFIG_DM9000_BASE
+#define DM9000_DATA			(CONFIG_DM9000_BASE + 4)
+#define CONFIG_DM9000_USE_16BIT
 
 /*
  * select serial console configuration
@@ -95,6 +124,12 @@
 #define CONFIG_RESET_TO_RETRY
 #define CONFIG_ZERO_BOOTDELAY_CHECK
 
+#if CONFIG_128MB_SDRAM
+#define CONFIG_BOOTARGS		"noinitrd root=/dev/mtdblock2 init=/linuxrc console=ttySAC0 mem=128M"
+#else
+#define CONFIG_BOOTARGS		"noinitrd root=/dev/mtdblock2 init=/linuxrc console=ttySAC0"
+#endif
+#define CONFIG_ETHADDR			0a:1b:2c:3d:4e:5f
 #define CONFIG_NETMASK		255.255.255.0
 #define CONFIG_IPADDR		10.0.0.110
 #define CONFIG_SERVERIP		10.0.0.1
@@ -107,7 +142,7 @@
  * Miscellaneous configurable options
  */
 #define CONFIG_SYS_LONGHELP		/* undef to save memory */
-#define CONFIG_SYS_PROMPT	"SMDK2410 # "
+#define CONFIG_SYS_PROMPT	"lskakaxi # "
 #define CONFIG_SYS_CBSIZE	256
 /* Print Buffer Size */
 #define CONFIG_SYS_PBSIZE	(CONFIG_SYS_CBSIZE + \
@@ -120,7 +155,16 @@
 #define CONFIG_SYS_MEMTEST_START	0x30000000	/* memtest works on */
 #define CONFIG_SYS_MEMTEST_END		0x33F00000	/* 63 MB in DRAM */
 
-#define CONFIG_SYS_LOAD_ADDR		0x30800000
+#ifdef CONFIG_128MB_SDRAM
+#define CONFIG_SYS_LOAD_ADDR		0x37000000	/* default load address	*/
+#else
+#define	CONFIG_SYS_LOAD_ADDR		0x33000000	/* default load address	*/
+#endif
+
+/* the PWM TImer 4 uses a counter of 15625 for 10 ms, so we need */
+/* it to wrap 100 times (total 1562500) to get 1 sec. */
+#define	CFG_HZ				1562500
+#define CFG_BAUDRATE_TABLE		{ 9600, 19200, 38400, 57600, 115200 }
 
 /* support additional compression methods */
 #define CONFIG_BZIP2
@@ -132,9 +176,14 @@
  */
 #define CONFIG_NR_DRAM_BANKS	1          /* we have 1 bank of DRAM */
 #define PHYS_SDRAM_1		0x30000000 /* SDRAM Bank #1 */
-#define PHYS_SDRAM_1_SIZE	0x04000000 /* 64 MB */
+#if CONFIG_128MB_SDRAM
+#define PHYS_SDRAM_1_SIZE		0x08000000 /* 128 MB */
+#else
+#define PHYS_SDRAM_1_SIZE		0x04000000 /* 64 MB */
+#endif
 
 #define PHYS_FLASH_1		0x00000000 /* Flash Bank #0 */
+#define CFG_FLASH_BASE			PHYS_FLASH_1
 
 #define CONFIG_SYS_FLASH_BASE	PHYS_FLASH_1
 
@@ -142,10 +191,21 @@
  * FLASH and environment organization
  */
 
+#define CFG_MAX_FLASH_BANKS		1	/* max number of memory banks */
+#define CONFIG_AMD_LV800		1	/* uncomment this if you have a LV800 flash */
+#ifdef CONFIG_AMD_LV800
+#define PHYS_FLASH_SIZE			0x00200000 /* 1MB */
+#define CFG_MAX_FLASH_SECT		(19)	/* max number of sectors on one chip */
+#define CFG_ENV_ADDR			(CFG_FLASH_BASE + 0x1F0000) /* addr of environment */
+#endif
+/* timeout values are in ticks */
+#define CFG_FLASH_ERASE_TOUT		(5*CFG_HZ) /* Timeout for Flash Erase */
+#define CFG_FLASH_WRITE_TOUT		(5*CFG_HZ) /* Timeout for Flash Write */
+
 #define CONFIG_SYS_FLASH_CFI
 #define CONFIG_FLASH_CFI_DRIVER
 #define CONFIG_FLASH_CFI_LEGACY
-#define CONFIG_SYS_FLASH_LEGACY_512Kx16
+#define CONFIG_SYS_FLASH_LEGACY_1024Kx16
 #define CONFIG_FLASH_SHOW_PROGRESS	45
 
 #define CONFIG_SYS_MAX_FLASH_BANKS	1
@@ -153,8 +213,15 @@
 #define CONFIG_SYS_MAX_FLASH_SECT	(19)
 
 #define CONFIG_ENV_ADDR			(CONFIG_SYS_FLASH_BASE + 0x070000)
-#define CONFIG_ENV_IS_IN_FLASH
-#define CONFIG_ENV_SIZE			0x10000
+//#define CONFIG_ENV_IS_IN_FLASH
+#define CONFIG_ENV_IS_IN_NAND
+#define CONFIG_ENV_OFFSET		0x40000
+#if(CONFIG_64MB_Nand == 1)
+#define CONFIG_ENV_SIZE			0xc000	/* Total Size of Environment Sector */
+#else
+#define CONFIG_ENV_SIZE			0x20000	/* Total Size of Environment Sector */
+#endif
+
 /* allow to overwrite serial and ethaddr */
 #define CONFIG_ENV_OVERWRITE
 
@@ -171,11 +238,19 @@
  * NAND configuration
  */
 #ifdef CONFIG_CMD_NAND
-#define CONFIG_NAND_S3C2410
-#define CONFIG_SYS_S3C2410_NAND_HWECC
+#define CONFIG_NAND_S3C2440
 #define CONFIG_SYS_MAX_NAND_DEVICE	1
 #define CONFIG_SYS_NAND_BASE		0x4E000000
 #endif
+
+#ifdef CONFIG_S3C2440_NAND_HWECC
+#define CONFIG_SYS_NAND_ECCSIZE		2048
+#define CONFIG_SYS_NAND_ECCBYTES	    4
+#endif
+
+#define CFG_NAND_BASE			0
+#define CFG_MAX_NAND_DEVICE		1
+#define NAND_MAX_CHIPS			1
 
 /*
  * File system

@@ -5,5 +5,5 @@
 # SPDX-License-Identifier:	GPL-2.0+
 #
 
-obj-y	:= tq2440.o
+obj-y	:= tq2440.o boot_init.o
 obj-y	+= lowlevel_init.o
