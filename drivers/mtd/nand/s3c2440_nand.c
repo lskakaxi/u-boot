@@ -53,14 +53,17 @@ static void s3c2440_hwcontrol(struct mtd_info *mtd, int cmd, unsigned int ctrl)
 		if (!(ctrl & NAND_ALE))
 			IO_ADDR_W |= S3C2440_ADDR_NALE;
 
+		if (cmd == NAND_CMD_NONE)
+			IO_ADDR_W = (ulong)&nand->nfdata;
+
 		chip->IO_ADDR_W = (void *)IO_ADDR_W;
 
 		if (ctrl & NAND_NCE)
-			writel(readl(&nand->nfconf) & ~S3C2440_NFCONF_nFCE,
-			       &nand->nfconf);
+			writel(readl(&nand->nfcont) & ~S3C2440_NFCONF_nFCE,
+			       &nand->nfcont);
 		else
-			writel(readl(&nand->nfconf) | S3C2440_NFCONF_nFCE,
-			       &nand->nfconf);
+			writel(readl(&nand->nfcont) | S3C2440_NFCONF_nFCE,
+			       &nand->nfcont);
 	}
 
 	if (cmd != NAND_CMD_NONE)
@@ -110,7 +113,9 @@ static int s3c2440_nand_correct_data(struct mtd_info *mtd, u_char *dat,
 
 int board_nand_init(struct nand_chip *nand)
 {
-	u_int8_t tacls, twrph0, twrph1;
+#define TACLS   0
+#define TWRPH0  4
+#define TWRPH1  2
 	struct s3c24x0_clock_power *clk_power = s3c24x0_get_base_clock_power();
 	struct s3c2440_nand *nand_reg = s3c2440_get_base_nand();
 
@@ -119,10 +124,7 @@ int board_nand_init(struct nand_chip *nand)
 	writel(readl(&clk_power->clkcon) | (1 << 4), &clk_power->clkcon);
 
 	/* initialize hardware */
-	tacls = 0;
-	twrph0 = 4;
-	twrph1 = 2;
-	writel((tacls<<12)|(twrph0<<8)|(twrph1<<4), &nand_reg->nfconf);
+	writel((TACLS<<12)|(TWRPH0<<8)|(TWRPH1<<4), &nand_reg->nfconf);
 	writel((1<<4)|(0<<1)|(1<<0), &nand_reg->nfcont);
 
 	/* initialize nand_chip data structure */
