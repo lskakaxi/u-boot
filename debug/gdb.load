@@ -1,0 +1,17 @@
+define load-uboot
+	target remote localhost:3333
+	mon init
+	mon reset halt
+	mon load_image /tmp/init.bin 0
+	mon resume 0
+	mon halt
+	mon arm920t cp15 2 0
+	mon resume
+	mon halt
+	load u-boot
+	symbol-file u-boot
+	delete
+end
+	document load-uboot
+	load uboot and debug uboot.
+end
