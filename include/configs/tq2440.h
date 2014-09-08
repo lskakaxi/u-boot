@@ -114,6 +114,7 @@
 #define CONFIG_CMD_REGINFO
 #define CONFIG_CMD_USB
 
+#define CONFIG_AUTO_COMPLETE
 #define CONFIG_SYS_HUSH_PARSER
 #define CONFIG_CMDLINE_EDITING
 
@@ -128,10 +129,10 @@
 #else
 #define CONFIG_BOOTARGS		"noinitrd root=/dev/mtdblock2 init=/linuxrc console=ttySAC0"
 #endif
-#define CONFIG_ETHADDR			0a:1b:2c:3d:4e:5f
+#define CONFIG_ETHADDR		0a:1b:2c:3d:4e:5f
 #define CONFIG_NETMASK		255.255.255.0
-#define CONFIG_IPADDR		10.0.0.110
-#define CONFIG_SERVERIP		10.0.0.1
+#define CONFIG_IPADDR		192.168.2.6
+#define CONFIG_SERVERIP		192.168.2.8
 
 #if defined(CONFIG_CMD_KGDB)
 #define CONFIG_KGDB_BAUDRATE	115200	/* speed to run kgdb serial port */
@@ -141,7 +142,7 @@
  * Miscellaneous configurable options
  */
 #define CONFIG_SYS_LONGHELP		/* undef to save memory */
-#define CONFIG_SYS_PROMPT	"lskakaxi # "
+#define CONFIG_SYS_PROMPT	"TQ2440 # "
 #define CONFIG_SYS_CBSIZE	256
 /* Print Buffer Size */
 #define CONFIG_SYS_PBSIZE	(CONFIG_SYS_CBSIZE + \
