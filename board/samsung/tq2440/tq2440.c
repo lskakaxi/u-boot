@@ -16,36 +16,31 @@
 
 DECLARE_GLOBAL_DATA_PTR;
 
-#define FCLK_SPEED 1
-
-#if FCLK_SPEED==0		/* Fout = 203MHz, Fin = 12MHz for Audio */
-#define M_MDIV	0xC3
-#define M_PDIV	0x4
-#define M_SDIV	0x1
-#elif FCLK_SPEED==1		/* Fout = 202.8MHz */
-#define M_MDIV	0xA1
-#define M_PDIV	0x3
-#define M_SDIV	0x1
-#endif
-
-#define USB_CLOCK 1
-
-#if USB_CLOCK==0
-#define U_M_MDIV	0xA1
-#define U_M_PDIV	0x3
-#define U_M_SDIV	0x1
-#elif USB_CLOCK==1
-#define U_M_MDIV	0x48
-#define U_M_PDIV	0x3
-#define U_M_SDIV	0x2
-#endif
-
 static inline void pll_delay(unsigned long loops)
 {
 	__asm__ volatile ("1:\n"
 	  "subs %0, %1, #1\n"
 	  "bne 1b":"=r" (loops):"0" (loops));
 }
+
+/* S3C2440: Mpll = (2*m * Fin) / (p * 2^s), UPLL = (m * Fin) / (p * 2^s)
+ * m = M (the value for divider M)+ 8, p = P (the value for divider P) + 2
+ */
+/* Fin = 12.0000MHz */
+#define S3C2440_MPLL_400MHZ	((0x5c<<12)|(0x01<<4)|(0x01))						//HJ 400MHz
+#define S3C2440_MPLL_405MHZ	((0x7f<<12)|(0x02<<4)|(0x01))						//HJ 405MHz
+#define S3C2440_MPLL_440MHZ	((0x66<<12)|(0x01<<4)|(0x01))						//HJ 440MHz
+#define S3C2440_MPLL_480MHZ	((0x98<<12)|(0x02<<4)|(0x01))						//HJ 480MHz
+#define S3C2440_MPLL_200MHZ	((0x5c<<12)|(0x01<<4)|(0x02))
+#define S3C2440_MPLL_100MHZ	((0x5c<<12)|(0x01<<4)|(0x03))
+#define S3C2440_UPLL_48MHZ	((0x38<<12)|(0x02<<4)|(0x02))						//HJ 100MHz
+#define S3C2440_CLKDIV		0x05    /* FCLK:HCLK:PCLK = 1:4:8, UCLK = UPLL 100MHz */
+#define S3C2440_CLKDIV136	0x07    /* FCLK:HCLK:PCLK = 1:3:6, UCLK = UPLL 133MHz */
+#define S3C2440_CLKDIV188	0x04    /* FCLK:HCLK:PCLK = 1:8:8 */
+#define S3C2440_CAMDIVN188	((0<<8)|(1<<9)) /* FCLK:HCLK:PCLK = 1:8:8 */
+/* Fin = 16.9344MHz */
+#define S3C2440_MPLL_399MHz     		((0x6e<<12)|(0x03<<4)|(0x01))
+#define S3C2440_UPLL_48MHZ_Fin16MHz		((60<<12)|(4<<4)|(2))
 
 /*
  * Miscellaneous platform dependent initialisations
@@ -57,19 +52,30 @@ int board_early_init_f(void)
 					s3c24x0_get_base_clock_power();
 	struct s3c24x0_gpio * const gpio = s3c24x0_get_base_gpio();
 
+	/* FCLK:HCLK:PCLK = ?:?:? */
+#if CONFIG_133MHZ_SDRAM
+	writel(S3C2440_CLKDIV136, &clk_power->clkdivn); //1:3:6
+#else
+	writel(S3C2440_CLKDIV, &clk_power->clkdivn); //1:3:8
+#endif
+	/* change to asynchronous bus mod */
+	__asm__("mrc    p15, 0, r1, c1, c0, 0\n"    /* read ctrl register   */
+		"orr    r1, r1, #0xc0000000\n"      /* Asynchronous         */
+		"mcr    p15, 0, r1, c1, c0, 0\n"    /* write ctrl register  */
+		:::"r1"
+	       );
+
 	/* to reduce PLL lock time, adjust the LOCKTIME register */
 	writel(0xFFFFFF, &clk_power->locktime);
 
-	/* configure MPLL */
-	writel((M_MDIV << 12) + (M_PDIV << 4) + M_SDIV,
-	       &clk_power->mpllcon);
+	/* configure UPLL */
+	writel(S3C2440_UPLL_48MHZ, &clk_power->upllcon);
 
 	/* some delay between MPLL and UPLL */
 	pll_delay(4000);
 
-	/* configure UPLL */
-	writel((U_M_MDIV << 12) + (U_M_PDIV << 4) + U_M_SDIV,
-	       &clk_power->upllcon);
+	/* configure MPLL */
+	writel(S3C2440_MPLL_400MHZ, &clk_power->mpllcon);
 
 	/* some delay between MPLL and UPLL */
 	pll_delay(8000);
