@@ -22,6 +22,7 @@
 #define CONFIG_S3C2440		/* specifically a SAMSUNG S3C2410 SoC */
 #define CONFIG_SMDK2410		/* on a SAMSUNG SMDK2410 Board */
 
+#define CONFIG_SKIP_LOWLEVEL_INIT
 #define CONFIG_SYS_TEXT_BASE	0x33D80000
 
 #define CONFIG_SYS_ARM_CACHE_WRITETHROUGH
@@ -74,6 +75,7 @@
  */
 #define CONFIG_S3C24X0_SERIAL
 #define CONFIG_SERIAL1		1	/* we use SERIAL 1 on SMDK2410 */
+#define CONFIG_BAUDRATE		115200
 
 /************************************************************
  * USB support (currently only works with D-cache off)
@@ -88,9 +90,6 @@
  * RTC
  ************************************************************/
 #define CONFIG_RTC_S3C24X0
-
-
-#define CONFIG_BAUDRATE		115200
 
 /*
  * BOOTP options
@@ -191,13 +190,6 @@
  * FLASH and environment organization
  */
 
-#define CFG_MAX_FLASH_BANKS		1	/* max number of memory banks */
-#define CONFIG_AMD_LV800		1	/* uncomment this if you have a LV800 flash */
-#ifdef CONFIG_AMD_LV800
-#define PHYS_FLASH_SIZE			0x00200000 /* 1MB */
-#define CFG_MAX_FLASH_SECT		(19)	/* max number of sectors on one chip */
-#define CFG_ENV_ADDR			(CFG_FLASH_BASE + 0x1F0000) /* addr of environment */
-#endif
 /* timeout values are in ticks */
 #define CFG_FLASH_ERASE_TOUT		(5*CFG_HZ) /* Timeout for Flash Erase */
 #define CFG_FLASH_WRITE_TOUT		(5*CFG_HZ) /* Timeout for Flash Write */
@@ -210,9 +202,9 @@
 
 #define CONFIG_SYS_MAX_FLASH_BANKS	1
 #define CONFIG_SYS_FLASH_BANKS_LIST     { CONFIG_SYS_FLASH_BASE }
-#define CONFIG_SYS_MAX_FLASH_SECT	(19)
+#define CONFIG_SYS_MAX_FLASH_SECT	(35)	/* max number of sectors on one chip */
 
-#define CONFIG_ENV_ADDR			(CONFIG_SYS_FLASH_BASE + 0x070000)
+#define CONFIG_ENV_ADDR			(CONFIG_SYS_FLASH_BASE + 0x1F0000)
 //#define CONFIG_ENV_IS_IN_FLASH
 #define CONFIG_ENV_IS_IN_NAND
 #define CONFIG_ENV_OFFSET		0x40000
