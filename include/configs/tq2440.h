@@ -23,7 +23,8 @@
 #define CONFIG_S3C2440		/* specifically a SAMSUNG S3C2410 SoC */
 #define CONFIG_SMDK2410		/* on a SAMSUNG SMDK2410 Board */
 
-#define CONFIG_SKIP_LOWLEVEL_INIT
+/* for debug through JTAG (load into RAM) */
+//#define CONFIG_SKIP_LOWLEVEL_INIT
 #define CONFIG_SYS_TEXT_BASE	0x33D80000
 
 #define CONFIG_SYS_ARM_CACHE_WRITETHROUGH
@@ -39,20 +40,20 @@
 #define MTDIDS_DEFAULT			"nand0=nandflash0"
 
 #if(CONFIG_64MB_Nand == 1)
-#define MTDPARTS_DEFAULT		"mtdparts=nandflash0:256k@0(bios)," \
+#define MTDPARTS_DEFAULT		"mtdparts=nandflash0:512k@0(bios)," \
 					"48k(params)," \
 					"144k(eboot)," \
 					"1536k(logo)," \
-					"2m(kernel)," \
+					"4m(kernel)," \
 					"-(root)"
 
 #else
-#define MTDPARTS_DEFAULT		"mtdparts=nandflash0:256k@0(bios)," \
+#define MTDPARTS_DEFAULT		"mtdparts=nandflash0:512k@0(bios)," \
 					"128k(params)," \
 					"128k(toc)," \
 					"512k(eboot)," \
 					"1024k(logo)," \
-					"2m(kernel)," \
+					"4m(kernel)," \
 					"-(root)"
 #endif
 
@@ -235,6 +236,7 @@
 #define CONFIG_NAND_S3C2440
 #define CONFIG_SYS_MAX_NAND_DEVICE	1
 #define CONFIG_SYS_NAND_BASE		0x4E000000
+#define CONFIG_MTD_NAND_VERIFY_WRITE
 #endif
 
 #ifdef CONFIG_S3C2440_NAND_HWECC
