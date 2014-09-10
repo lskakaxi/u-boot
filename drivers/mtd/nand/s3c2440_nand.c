@@ -43,7 +43,7 @@ static void s3c2440_hwcontrol(struct mtd_info *mtd, int cmd, unsigned int ctrl)
 	struct nand_chip *chip = mtd->priv;
 	struct s3c2440_nand *nand = s3c2440_get_base_nand();
 
-	debug("hwcontrol(): 0x%02x 0x%02x\n", cmd, ctrl);
+//	debug("hwcontrol(): 0x%02x 0x%02x\n", cmd, ctrl);
 
 	if (ctrl & NAND_CTRL_CHANGE) {
 		ulong IO_ADDR_W = (ulong)nand;
@@ -73,7 +73,7 @@ static void s3c2440_hwcontrol(struct mtd_info *mtd, int cmd, unsigned int ctrl)
 static int s3c2440_dev_ready(struct mtd_info *mtd)
 {
 	struct s3c2440_nand *nand = s3c2440_get_base_nand();
-	debug("dev_ready\n");
+//	debug("dev_ready\n");
 	return readl(&nand->nfstat) & 0x01;
 }
 
