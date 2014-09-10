@@ -66,6 +66,7 @@
 
 /* EON */
 #define EN29LV040A	0x004F
+#define EN29LV160A	0x2249
 
 /*
  * Unlock address sets for AMD command sets.
@@ -351,7 +352,24 @@ static const struct amd_flash_info jedec_table[] = {
 	},
 #endif
 #ifdef CONFIG_SYS_FLASH_LEGACY_1024Kx16
-	{    /* TQ2440 EN29LV160AB */
+	{	/* boot form nor */
+		.mfr_id		= (u8)EON_MANUFACT,
+		.dev_id		= EN29LV160A,
+		.name		= "EON EN29LV160A",
+		.uaddr		= {
+			[1] = MTD_UADDR_0x0555_0x02AA /* x8 */
+		},
+		.DevSize	= SIZE_2MiB,
+		.CmdSet		= P_ID_AMD_STD,
+		.NumEraseRegions= 4,
+		.regions	= {
+			ERASEINFO(0x04000, 1),
+			ERASEINFO(0x02000, 2),
+			ERASEINFO(0x08000, 1),
+			ERASEINFO(0x10000, 31),
+		}
+	},
+	{    /* TQ2440 EN29LV160AB boot from nand */
 		.mfr_id     = 0xf0,	/* manufacturer_id */
 		.dev_id     = 0xe10f,   /* device_id */
 		.name       = "EON EN29LV160AB",
