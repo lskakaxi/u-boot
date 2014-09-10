@@ -170,6 +170,10 @@
 #define	CONFIG_SYS_LOAD_ADDR		0x33000000	/* default load address	*/
 #endif
 
+#define CONFIG_BOOTSTAGE
+#define CONFIG_BOOTSTAGE_REPORT
+#define CONFIG_CMD_BOOTSTAGE
+
 /* the PWM TImer 4 uses a counter of 15625 for 10 ms, so we need */
 /* it to wrap 100 times (total 1562500) to get 1 sec. */
 #define	CFG_HZ				1562500
@@ -179,6 +183,9 @@
 #define CONFIG_BZIP2
 #define CONFIG_LZO
 #define CONFIG_LZMA
+
+#define CONFIG_IMAGE_FORMAT_LEGACY
+#define CONFIG_FIT
 
 /*-----------------------------------------------------------------------
  * Physical Memory Map
