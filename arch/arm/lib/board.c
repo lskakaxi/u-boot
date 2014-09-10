@@ -228,7 +228,16 @@ static int mark_bootstage(void)
 	return 0;
 }
 
+/* for TQ2440 led debug, GPIO 5,6,7,8 */
+static void led_debug(void)
+{
+	writel(0x55555, 0x56000010);
+	writel(0x7f, 0x56000014); //LED4 &LED3
+	while (1) ;
+}
+
 init_fnc_t *init_sequence[] = {
+//	led_debug();
 	arch_cpu_init,		/* basic arch cpu dependent setup */
 	mark_bootstage,
 #ifdef CONFIG_OF_CONTROL
