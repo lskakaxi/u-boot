@@ -141,6 +141,7 @@
 #define CONFIG_NETMASK		255.255.255.0
 #define CONFIG_IPADDR		192.168.2.6
 #define CONFIG_SERVERIP		192.168.2.8
+#define CONFIG_BOOTCOMMAND	"nboot 0x32000000 kernel; bootm 0x32000000"
 
 #if defined(CONFIG_CMD_KGDB)
 #define CONFIG_KGDB_BAUDRATE	115200	/* speed to run kgdb serial port */
