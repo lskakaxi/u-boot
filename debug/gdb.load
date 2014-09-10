@@ -1,4 +1,4 @@
-define load-uboot
+define load-uboot-nandboot
 	target remote localhost:3333
 	mon init
 	mon reset halt
@@ -12,6 +12,24 @@ define load-uboot
 	symbol-file u-boot
 	delete
 end
-	document load-uboot
-	load uboot and debug uboot.
+	document load-uboot-nandboot
+	load uboot and debug uboot when boot from nand.
+end
+
+define load-uboot-norboot
+	target remote localhost:3333
+	mon init
+	mon reset halt
+	mon load_image /tmp/init.bin 0x40000000
+	mon resume 0x40000000
+	mon halt
+	mon arm920t cp15 2 0
+	mon resume
+	mon halt
+	load u-boot
+	symbol-file u-boot
+	delete
+end
+	document load-uboot-norboot
+	load uboot and debug uboot when boot from nor.
 end
