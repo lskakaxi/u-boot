@@ -120,6 +120,11 @@
 #define CONFIG_SYS_HUSH_PARSER
 #define CONFIG_CMDLINE_EDITING
 
+
+#define CONFIG_EXTRA_ENV_SETTINGS                                       \
+	"tftp2nor=tftp 0x31000000 u-boot.bin; protect off all; erase 0 0xfffff; cp.w 0x31000000 0 0x100000\0"					\
+	""
+
 /* autoboot */
 #define CONFIG_BOOTDELAY	5
 #define CONFIG_BOOT_RETRY_TIME	-1
@@ -210,7 +215,7 @@
 #define CONFIG_ENV_ADDR			(CONFIG_SYS_FLASH_BASE + 0x1F0000)
 //#define CONFIG_ENV_IS_IN_FLASH
 #define CONFIG_ENV_IS_IN_NAND
-#define CONFIG_ENV_OFFSET		0x40000
+#define CONFIG_ENV_OFFSET		0x80000
 #if(CONFIG_64MB_Nand == 1)
 #define CONFIG_ENV_SIZE			0xc000	/* Total Size of Environment Sector */
 #else
