@@ -25,7 +25,8 @@
 
 /* for debug through JTAG (load into RAM) */
 //#define CONFIG_SKIP_LOWLEVEL_INIT
-#define CONFIG_SYS_TEXT_BASE	0x33D80000
+//#define CONFIG_SYS_TEXT_BASE	0x33D80000
+#define CONFIG_SYS_TEXT_BASE	0
 
 #define CONFIG_SYS_ARM_CACHE_WRITETHROUGH
 
@@ -122,7 +123,7 @@
 
 
 #define CONFIG_EXTRA_ENV_SETTINGS                                       \
-	"tftp2nor=tftp 0x31000000 u-boot.bin; protect off all; erase 0 0xfffff; cp.w 0x31000000 0 0x100000\0"					\
+	"tftp2nor=tftp 0x31000000 u-boot.bin; protect off all; erase 0 0xfffff; cp.b 0x31000000 0 0x100000\0"					\
 	""
 
 /* autoboot */
