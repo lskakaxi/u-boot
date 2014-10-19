@@ -131,6 +131,9 @@
 #define CONFIG_BOOT_RETRY_TIME	-1
 #define CONFIG_RESET_TO_RETRY
 #define CONFIG_ZERO_BOOTDELAY_CHECK
+#define CONFIG_AUTOBOOT_PROMPT \
+	"autoboot in %d seconds\n",bootdelay
+#define CONFIG_BOOTCOMMAND	"nboot 0x32000000 kernel; bootm 0x32000000"
 
 #if CONFIG_128MB_SDRAM
 #define CONFIG_BOOTARGS		"noinitrd root=/dev/mtdblock2 init=/linuxrc console=ttySAC0 mem=128M"
@@ -140,8 +143,7 @@
 #define CONFIG_ETHADDR		0a:1b:2c:3d:4e:5f
 #define CONFIG_NETMASK		255.255.255.0
 #define CONFIG_IPADDR		192.168.2.6
-#define CONFIG_SERVERIP		192.168.2.8
-#define CONFIG_BOOTCOMMAND	"nboot 0x32000000 kernel; bootm 0x32000000"
+#define CONFIG_SERVERIP		192.168.2.10
 
 #if defined(CONFIG_CMD_KGDB)
 #define CONFIG_KGDB_BAUDRATE	115200	/* speed to run kgdb serial port */
